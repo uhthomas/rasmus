@@ -1,0 +1,8 @@
+filegroup(
+    name = "lib",
+    srcs = [
+        "rasmus.ex",
+        "//lib/rasmus",
+    ],
+    visibility = ["//visibility:public"],
+)

@@ -1,0 +1,7 @@
+filegroup(
+    name = "config",
+    srcs = [
+        "config.exs",
+    ],
+    visibility = ["//visibility:public"],
+)

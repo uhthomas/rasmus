@@ -1,0 +1,2 @@
+defmodule Rasmus do
+end

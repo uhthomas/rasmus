@@ -1,0 +1,61 @@
+load("@bazel_gazelle//:def.bzl", "gazelle")
+load("@com_github_bazelbuild_buildtools//buildifier:def.bzl", "buildifier")
+load("@io_bazel_rules_docker//container:container.bzl", "container_image")
+load("@io_bazel_rules_docker//contrib:push-all.bzl", docker_push_all = "docker_push")
+load("@io_bazel_rules_docker//docker:docker.bzl", "docker_bundle", "docker_push")
+
+# gazelle:prefix github.com/uhthomas/rasmus
+gazelle(name = "gazelle")
+
+buildifier(name = "buildifier")
+
+genrule(
+    name = "rasmus",
+    srcs = [
+        "//config",
+        "//lib",
+        "mix.exs",
+        "mix.lock",
+    ],
+    outs = ["rasmus.tar.gz"],
+    cmd = """
+        export HOME=.home
+        export MIX_ENV=prod
+        mix do local.hex --force, local.rebar --force, deps.get, release
+        tar -czf $@ _build/prod/rel/rasmus
+    """,
+)
+
+container_image(
+    name = "image",
+    base = "@io_docker_index_hexpm_elixir//image",
+    cmd = ["start"],
+    entrypoint = [
+        "/_build/prod/rel/rasmus/bin/rasmus",
+    ],
+    tars = ["rasmus.tar.gz"],
+)
+
+docker_push(
+    name = "push",
+    image = ":image",
+    registry = "ghcr.io",
+    repository = "uhthomas/rasmus",
+    tag = "{STABLE_GIT_COMMIT}",
+)
+
+docker_bundle(
+    name = "bundle",
+    images = {
+        "ghcr.io/uhthomas/rasmus:latest": ":image",
+        "ghcr.io/uhthomas/rasmus:{STABLE_GIT_REF}": ":image",
+    },
+)
+
+docker_push_all(
+    name = "push_tag",
+    bundle = ":bundle",
+    # Pushing layers concurrently sometimes fails.
+    # See GitHub support ticket 885486.
+    sequential = True,
+)

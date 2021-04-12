@@ -1,0 +1,8 @@
+filegroup(
+    name = "rasmus",
+    srcs = [
+        "application.ex",
+        "websocket.ex",
+    ],
+    visibility = ["//visibility:public"],
+)
