@@ -14,19 +14,23 @@ defmodule Rasmus.WebSocket do
   def websocket_init(state) do
     :timer.send_interval(5000, :ping)
 
+    {:ok, hostname} = :inet.gethostname()
+
     PubSub.subscribe(:rasmus, "global")
-    {[], state, :hibernate}
+    {[{:text, "Hi! You're connected to #{hostname}."}], state, :hibernate}
   end
 
   def websocket_handle({:text, data}, state) do
-    PubSub.broadcast(:rasmus, "global", {:hello, data})
+    {:ok, hostname} = :inet.gethostname()
+
+    PubSub.broadcast(:rasmus, "global", {:hello, {hostname, data}})
     {[], state, :hibernate}
   end
 
   def websocket_handle(:pong, state), do: {[], state, :hibernate}
 
-  def websocket_info({:hello, data}, state),
-    do: {[{:text, Poison.encode!(data)}], state, :hibernate}
+  def websocket_info({:hello, {hostname, data}}, state),
+    do: {[{:text, "#{hostname}: #{data}"}], state, :hibernate}
 
   def websocket_info(:ping, state), do: {[:ping], state, :hibernate}
 
