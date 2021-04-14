@@ -1,0 +1,9 @@
+filegroup(
+    name = "rel",
+    srcs = [
+        "env.bat.eex",
+        "env.sh.eex",
+        "vm.args.eex",
+    ],
+    visibility = ["//visibility:public"],
+)

@@ -14,6 +14,7 @@ genrule(
     srcs = [
         "//config",
         "//lib",
+        "//rel",
         "mix.exs",
         "mix.lock",
     ],
