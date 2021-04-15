@@ -1,0 +1,15 @@
+genrule(
+    name = "protoc-gen-elixir-gen",
+    srcs = [
+        "//:mix.exs",
+        "//:mix.lock",
+    ],
+    outs = ["protoc-gen-elixir"],
+    cmd = """
+        export HOME=$$(pwd)/tmp
+        mix do local.hex --force, local.rebar --force, deps.get, deps.compile, escript.install hex protobuf --force
+        cp $$HOME/.mix/escripts/protoc-gen-elixir $@
+    """,
+    executable = True,
+    visibility = ["//visibility:public"],
+)

@@ -20,7 +20,7 @@ genrule(
     ],
     outs = ["rasmus.tar.gz"],
     cmd = """
-        export HOME=.home
+        export HOME=$(@D)
         export MIX_ENV=prod
         mix do local.hex --force, local.rebar --force, deps.get, release
         tar -czf $@ _build/prod/rel/rasmus
@@ -60,3 +60,8 @@ docker_push_all(
     # See GitHub support ticket 885486.
     sequential = True,
 )
+
+exports_files([
+    "mix.exs",
+    "mix.lock",
+])

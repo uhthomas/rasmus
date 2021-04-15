@@ -23,7 +23,8 @@ defmodule Rasmus.MixProject do
       {:cowboy, "~> 2.8"},
       {:libcluster, "~> 3.2"},
       {:phoenix_pubsub, "~> 2.0"},
-      {:poison, "~> 4.0"}
+      {:poison, "~> 4.0"},
+      {:protobuf, "~> 0.7.1"}
     ]
   end
 end

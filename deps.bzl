@@ -13,7 +13,13 @@ def dependencies():
         name = "com_github_bazelbuild_buildtools",
         sha256 = "c28eef4d30ba1a195c6837acf6c75a4034981f5b4002dda3c5aa6e48ce023cf1",
         strip_prefix = "buildtools-4.0.1",
-        url = "https://github.com/bazelbuild/buildtools/archive/4.0.1.tar.gz",
+        urls = ["https://github.com/bazelbuild/buildtools/archive/4.0.1.tar.gz"],
+    )
+    http_archive(
+        name = "com_github_google_protobuf",
+        sha256 = "2b737d6d120418c443c561cf4032c0141f9626f68f532b5d2c27ee8a191c996e",
+        strip_prefix = "protobuf-3.15.8",
+        urls = ["https://github.com/protocolbuffers/protobuf/releases/download/v3.15.8/protobuf-all-3.15.8.tar.gz"],
     )
     http_archive(
         name = "rules_proto",
