@@ -23,14 +23,22 @@ defmodule Rasmus.WebSocket do
   def websocket_handle({:text, data}, state) do
     {:ok, hostname} = :inet.gethostname()
 
-    PubSub.broadcast(:rasmus, "global", {:hello, {hostname, data}})
-    {[], state, :hibernate}
+    PubSub.broadcast(:rasmus, "global", {:broadcast, {self(), hostname, data}})
+
+    {[{:text, "Sent!"}], state, :hibernate}
   end
 
   def websocket_handle(:pong, state), do: {[], state, :hibernate}
 
-  def websocket_info({:hello, {hostname, data}}, state),
-    do: {[{:text, "#{hostname}: #{data}"}], state, :hibernate}
+  def websocket_info({:broadcast, {from, hostname, data}}, state) do
+    case self() do
+      ^from ->
+        {[], state, :hibernate}
+
+      _ ->
+        {[{:text, "#{hostname}: #{data}"}], state, :hibernate}
+    end
+  end
 
   def websocket_info(:ping, state), do: {[:ping], state, :hibernate}
 
